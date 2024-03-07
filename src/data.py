@@ -31,16 +31,11 @@ class GithubIntegrationData():
         else:
             raise Exception("'org_name' must be specified")
 
-    def transform(self, owner, data=None):
-        if data:
-            # Passed data from ingestion (allow for less reads from I/O)
-            for repo, _ in data:
-                df = self.spark.createDataFrame([repo], JSON_SCHEMA)
-        else:
-            df = (self.spark
-                    .read
-                    .schema(JSON_SCHEMA)
-                    .json(f"{self.base_path}/{owner}/**/*.json"))
+    def transform(self, owner):
+        df = (self.spark
+                .read
+                .schema(JSON_SCHEMA)
+                .json(f"{self.base_path}/{owner}/**/*.json"))
         
         df = self._transform_process(df)
         return df
@@ -85,7 +80,7 @@ class GithubIntegrationData():
             F.col("repo.id").cast("string").alias("repository_id"),
             F.col("repo.name").alias("repository_name"),
             F.col("repo.owner.login").alias("repository_owner"),
-            F.explode("prs").alias("pr")
+            F.explode_outer("prs").alias("pr")
         ).groupBy(
             "Organization Name",
             "repository_id",
