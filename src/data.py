@@ -1,4 +1,4 @@
-from typing import Union
+from typing import List, Tuple
 from pyspark.sql import SparkSession, Row
 from pyspark.sql import functions as F
 
@@ -14,7 +14,7 @@ class GithubIntegrationData():
         self.spark = SparkSession.builder.appName(SPARK_APP_NAME).getOrCreate()
         self._setup(output_dir)
 
-    def ingest(self, owner, type="orgs") -> Union[dict, str]:
+    def ingest(self, owner, type="orgs") -> List[Tuple[dict, str]]:
         if owner:
             repos_list = []
             repos = self._list_repos(owner, type=type)
@@ -29,7 +29,7 @@ class GithubIntegrationData():
                 repos_list.append((repo_data, file_name))
             return repos_list
         else:
-            raise Exception("'org_name' must be specified")
+            raise Exception("'owner' must be specified")
 
     def transform(self, owner):
         df = (self.spark

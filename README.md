@@ -13,7 +13,12 @@ git clone https://github.com/MadBull1995/scytale-exercise.git
 cd ./scytale-exercise
 ```
 
-3. And run the following command:
+3. Install dependencies:
+```bash
+pip install requirements.txt
+```
+
+4. And run the following command (from root folder):
 ```bash
 python -m src.main
 ```
@@ -34,6 +39,7 @@ The files will be structured as follows:
 
 ```bash
 .
+├── data # Persisted files
 ├── src
 │   ├── __init__.py
 │   ├── _schema.py # py-spark utils schema
